@@ -1,0 +1,43 @@
+package serverPackage;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class Server {
+
+    public static void main(String[] args) {
+        try {
+            ServerSocket serverSocket = new ServerSocket(5000);
+            System.out.println("Je suis un serveur en attente la connexion d'un client ");
+
+            Socket socket = serverSocket.accept();
+            System.out.println("un client est connecté");
+
+            DataInputStream in = new DataInputStream(socket.getInputStream());
+            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+
+            while (true) {
+                int x = in.readInt();
+                if (x == 0) {
+                    System.out.println("Le client a envoyé 0 : fin de la communication");
+                    break;
+                }
+                int resultat = x * 5;
+                System.out.println("Reçu : " + x + " -> envoi de " + resultat);
+                out.writeInt(resultat);
+                out.flush();
+            }
+
+            in.close();
+            out.close();
+            socket.close();
+            serverSocket.close();
+            System.out.println("Sockets fermés côté serveur");
+        } catch (IOException e) {
+            System.out.println("Erreur serveur : " + e.getMessage());
+        }
+    }
+}
